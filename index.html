@@ -5,6 +5,7 @@
 :root{--dark:#0A5840;--green:#12754F;--gold:#C69D46;--bg:#EEF4F0;--ink:#0F2A20;--mut:#5B7266;--line:#D5E3DA;--jm-green-900:#0A5840;--jm-green-700:#12754F;--jm-green-500:#1E8A5F;--jm-gold:#C69D46;--jm-cream:#F3F8F4;--jm-ink:#0F2A20;--surface:#fff;--muted:#5B7266;--font-display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;--font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--font-body)}
+html,body{max-width:100%;overflow-x:hidden}@supports (overflow:clip){html,body{overflow-x:clip}}
 .app{padding-bottom:96px;min-height:100%}
 h1,h2,.hdg,.h{font-family:var(--font-display);font-weight:800}
 h2{font-size:22px;margin:14px 0 10px}
@@ -60,11 +61,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .spk{position:absolute!important;z-index:1!important;animation:twk 2.8s ease-in-out infinite}
 @keyframes twk{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}
 @media (prefers-reduced-motion:reduce){.mc::after,.mc-bg,.spk{animation:none}}
-). Variabel --bg, --surface, --line, --muted, --jm-ink dipakai juga di luar header, sesuaikan dgn tema Anda -->
-<style>
 
 .jm-header{position:relative;color:var(--jm-cream);
-  padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 58px;
+  padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 66px;
   background:
     radial-gradient(120% 90% at 100% 0%,#23986B 0%,transparent 55%),
     linear-gradient(165deg,var(--jm-green-700) 0%,var(--jm-green-900) 100%);
@@ -165,6 +164,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 
 .jm-search input{padding:0;margin:0;border-radius:0;width:auto}
 .jm-search{max-width:520px}.jm-header{margin:0}
+.jm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.jm-chips .jm-status{margin-top:0}
+.jm-pts{border:1px solid rgba(198,157,70,.65);color:#F1D699;font-family:var(--font-body);cursor:pointer}.jm-pts svg{width:13px;height:13px;fill:currentColor}
 .jm-still .jm-rise,.jm-still .jm-badge,.jm-still .jm-search,.jm-still .jm-arc path{animation:none}
 .pgpage,.stpage{position:fixed;inset:0;z-index:70;overflow:auto;background:var(--bg);color:var(--jm-ink)}
 .pgapp,.stapp{max-width:430px;margin:0 auto;min-height:100%}
@@ -223,7 +224,7 @@ const listHtml=()=>{const l=products.filter(p=>(cat==="Semua"||p.category===cat)
 const topCard=()=>me?memberCard()
  :`<div class="mem"><b>Masuk untuk lihat harga</b><span>Harga dan pemesanan khusus member.</span><div style="margin-top:12px"><button class="add" data-act="login">Masuk</button><button class="add" data-act="reg" style="background:#fff;color:var(--green)">Daftar</button></div></div>`;
 function homeView(){const cats=["Semua",...new Set(products.map(p=>p.category).filter(Boolean))];
-return`${topCard()}
+return`${me?"":topCard()}
 <div class="chips">${cats.map(c=>`<button class="cat ${c===cat?"on":""}" data-act="cat" data-id="${esc(c)}">${esc(c)}</button>`).join("")}</div><div id="list">${listHtml()}</div>`}
 const ordersView=()=>`<h2>Orderan</h2>`+(orders.map(o=>`<div class="oc"><div class="oh"><b>#${o.id}</b><span class="st ${o.status}">${stl(o.status)}</span></div><small>${new Date(o.created_at).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"})} · ${o.fulfillment==="antar"?"Diantar":"Ambil di toko"} · ${payl(o.payment)}</small><p>${o.items.map(i=>`${esc(i.name)} ×${i.qty}`).join(", ")}</p><button class="link" data-act="status" data-id="${o.id}">Lacak pesanan ›</button><div class="oh"><b>${rp(o.total)}</b>${["selesai","batal","ditolak"].includes(o.status)?`<button class="link" data-act="again" data-id="${o.id}">Pesan lagi</button>`:`<small>Sedang berjalan</small>`}</div></div>`).join("")||`<p class="empty">Belum ada pesanan.</p>`);
 const contactView=()=>`<h2>Kontak</h2><div class="oc"><p>Ada yang ingin ditanyakan? Hubungi toko lewat WhatsApp.</p><a href="https://wa.me/${esc(cfg.wa)}" target="_blank" rel="noopener"><button class="btn">Chat WhatsApp</button></a></div>`;
@@ -231,7 +232,7 @@ const prio=()=>{if(me.tier==="prioritas")return`<div class="oc"><b>Prioritas akt
  const m=setg.prioritas_mode;
  const body=me.apply_status==="diajukan"?`<p>Pengajuan Anda sedang ditinjau admin.</p>`:me.apply_status==="ditolak"?`<p>Pengajuan belum bisa disetujui saat ini. Hubungi admin untuk info.</p>`:m==="ajukan"?`<p>Ajukan Prioritas agar pesanan bisa diantar.</p><button class="btn" data-act="apply">Ajukan Prioritas</button>`:`<p>Prioritas diberikan toko kepada pelanggan setia. Hubungi admin untuk info.</p>`;
  return`<div class="oc"><b>Layanan antar (Prioritas)</b>${body}<p class="msg">${esc(msg)}</p></div>`};
-const profileView=()=>`<h2>Profil</h2><div class="oc"><b>${esc(me.name)}</b><p>WhatsApp: ${esc(me.wa)}<br>Member ${esc(level())} · ${me.points} poin</p></div>${prio()}<button class="btn" data-act="logout">Keluar</button>`;
+const profileView=()=>`<h2>Profil</h2>${memberCard()}<div class="oc"><b>Akun</b><p>WhatsApp: ${esc(me.wa)}<br>Level ${esc(level())} · ${me.points} poin</p></div>${prio()}<button class="btn" data-act="logout">Keluar</button>`;
 
 function cartSheet(){const ids=Object.keys(cart);const total=ids.reduce((s,i)=>s+cart[i]*(products.find(p=>p.id==i)?.price||0),0);
 let addr="";try{addr=localStorage.getItem("addr")||""}catch{}
@@ -265,7 +266,7 @@ function header(){const bp=bump;bump=false;const h=new Date().getHours(),[o,c]=h
 <div class="jm-actions"><button class="jm-btn" type="button" aria-label="Orderan saya" data-act="tab" data-id="orders"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 1 1 12 0v6l1.5 2h-15z"/><path d="M10 21h4"/></svg></button>
 <button class="jm-btn" type="button" aria-label="Keranjang, ${n} barang" data-act="cart"><svg viewBox="0 0 24 24"><path d="M3 4h2.5l2 11h10l2-8H7"/><circle cx="9" cy="19.5" r="1.2"/><circle cx="17" cy="19.5" r="1.2"/></svg><span class="jm-count ${bp?"bump":""}">${n}</span></button></div></div>
 <h1 class="jm-headline jm-rise" style="--d:.25s">Mau belanja apa hari ini?</h1><p class="jm-sub jm-rise" style="--d:.35s">Cari dan pilih kebutuhan dapur</p>
-<div class="jm-status jm-rise ${open?"":"is-closed"}" style="--d:.45s"><span class="jm-dot"></span><span>${open?"Toko buka sampai "+pad2(c)+".00":"Toko tutup, buka lagi pukul "+pad2(o)+".00"}</span></div></header>
+<div class="jm-chips jm-rise" style="--d:.45s"><div class="jm-status ${open?"":"is-closed"}"><span class="jm-dot"></span><span>${open?"Toko buka sampai "+pad2(c)+".00":"Toko tutup, buka lagi pukul "+pad2(o)+".00"}</span></div>${me?`<button type="button" class="jm-status jm-pts" data-act="tab" data-id="profile" aria-label="Profil, level ${esc(level())}, ${me.points} poin">${STAR}${me.points} poin</button>`:""}</div></header>
 <div class="jm-search" role="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5B7266" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><input id="q" type="search" placeholder="Cari beras, minyak, gula…" aria-label="Cari produk" value="${esc(q)}"><button class="jm-go" type="button" aria-label="Cari" data-act="noop"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>`}
 function startType(){if(typed)return;typed=true;if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
  const w=["beras","minyak goreng","gula pasir","telur","bumbu dapur"];let i=0,c=0,del=false;
