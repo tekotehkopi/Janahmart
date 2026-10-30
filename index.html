@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Janah Mart</title><link rel="icon" href="ikon-janah-mart.png"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<title>Janah Mart</title><link rel="icon" href="ikon-janah-mart.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0A5840"><link rel="apple-touch-icon" href="icon-192.png"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--dark:#0A5840;--green:#12754F;--gold:#C69D46;--bg:#EEF4F0;--ink:#0F2A20;--mut:#5B7266;--line:#D5E3DA;--jm-green-900:#0A5840;--jm-green-700:#12754F;--jm-green-500:#1E8A5F;--jm-gold:#C69D46;--jm-cream:#F3F8F4;--jm-ink:#0F2A20;--surface:#fff;--muted:#5B7266;--font-display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;--font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box}
@@ -205,6 +205,23 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 // === PENGATURAN ===
 const cfg={brand:"Janah Mart",logo:"logo-janah-mart.png",icon:"ikon-janah-mart.png",wa:"6283866646900",helpWa:"6283877796312",helpLink:"https://wa.me/qr/YWG2ASHNR76BF1",hours:[7,21]};
 const sb=supabase.createClient("https://rnccjoyomjexqhxxcqbi.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJuY2Nqb3lvbWpleHFoeHhjcWJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxODA5NTAsImV4cCI6MjEwODc1Njk1MH0.Mqe5eST4tKgQsZCBr24KwwpikvQJJNX-GCEym4oribY");
+/* === PWA / OFFLINE (Janah Mart) === */
+const JM_CACHE="jm_cache_v1",JM_PUB="jm_pub_v1",JM_CART="jm_cart_v1",jmState={stale:false,upd:null};
+const jmNet=e=>!navigator.onLine||/failed to fetch|network|load failed|timeout/i.test((e&&e.message)||"");
+const jmRead=k=>{try{return JSON.parse(localStorage.getItem(k||JM_CACHE)||"null")}catch{return null}};
+const jmWrite=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const jmCartInit=()=>{const c=jmRead(JM_CART);return c&&typeof c==="object"&&!Array.isArray(c)?c:{}};
+const jmCartSave=c=>jmWrite(JM_CART,c);
+const jmClear=()=>{try{localStorage.removeItem(JM_CACHE);localStorage.removeItem(JM_PUB);localStorage.removeItem(JM_CART)}catch{}try{caches.delete("jm-img-v1")}catch{}};
+function jmToast(t){let e=document.getElementById("jmToast");if(!e){e=document.createElement("div");e.id="jmToast";e.style.cssText="position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 110px);transform:translateX(-50%);max-width:88%;z-index:99999;background:#0A5840;color:#fff;padding:10px 16px;border-radius:14px;font:600 13px/1.35 Figtree,system-ui,sans-serif;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.25);display:none";document.body.appendChild(e)}e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>{e.style.display="none"},2600)}
+function jmBar(){let b=document.getElementById("jmBar");if(!b){b=document.createElement("div");b.id="jmBar";b.style.cssText="position:fixed;left:0;right:0;top:0;z-index:99999;display:none;padding:calc(env(safe-area-inset-top,0px) + 8px) 14px 8px;background:#C79F45;color:#1B1B1B;font:600 13px/1.35 Figtree,system-ui,sans-serif;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.18)";document.body.appendChild(b)}
+ let t="",f=null;
+ if(jmState.upd){t="Ada versi baru. Ketuk untuk memperbarui.";f=()=>{try{jmState.upd.postMessage({type:"SKIP_WAITING"})}catch{}}}
+ else if(!navigator.onLine){t="Mode offline: menampilkan data terakhir. Pesanan bisa dikirim setelah online."}
+ else if(jmState.stale){t="Sudah online. Ketuk untuk memuat data terbaru.";f=()=>location.reload()}
+ b.textContent=t;b.style.display=t?"block":"none";b.style.cursor=f?"pointer":"default";b.onclick=f;document.body.style.paddingTop=t?b.offsetHeight+"px":""}
+addEventListener("online",jmBar);addEventListener("offline",jmBar);
+
 const JM_D={"h": "M203.98 117.21C203.92 116.99 203.72 116.81 203.67 116.57C203.46 115.71 203.56 114.72 203.5 113.84C203.37 111.95 203.17 109.99 202.76 108.14C201.18 101.14 197.85 94.4 192.99 89.06C187.72 83.29 181.18 79.03 173.73 76.67C171.24 75.87 167.99 75.4 165.38 75.17C150.93 73.92 137.28 79.9 128.33 91.33C124.32 96.45 121.52 102.75 120.25 109.12C119.76 111.57 119.9 114.11 119.5 116.57C119.46 116.82 119.28 117 119.23 117.22C114.63 117.21 110.02 117.19 105.41 117.17C105.38 116.95 105.19 116.77 105.16 116.52C104.97 114.99 105.49 112.64 105.7 111.07C105.88 109.66 105.94 108.24 106.2 106.85C107.22 101.42 109.17 96.04 111.74 91.16C122.51 70.68 144.04 58.96 167.09 61.16C171.2 61.55 175.4 62.23 179.31 63.59C181.35 64.29 183.32 65.21 185.27 66.12C190.6 68.63 195.64 71.82 199.94 75.89C204.42 80.13 208.37 85.26 211.18 90.76C214.72 97.69 217.31 105.29 217.74 113.12C217.8 114.23 217.97 115.51 217.78 116.61C217.74 116.86 217.56 117.05 217.52 117.28C213 117.25 208.49 117.23 203.98 117.21Z", "b": "M192.08 154.89C191.77 154.79 191.57 154.56 191.21 154.5C189.36 154.22 187.34 154.47 185.47 154.47C180.47 154.46 175.47 154.46 170.47 154.47C155.3 154.52 140.14 154.48 124.97 154.48C121.47 154.48 117.97 154.46 114.47 154.45C112.59 154.44 110.58 154.25 108.73 154.58C106.45 154.98 104.23 155.95 102.52 157.53C101.01 158.92 99.89 160.83 99.24 162.76C98.74 164.24 98.78 165.91 98.64 167.46C98.3 171.03 98.01 174.59 97.77 178.17C97.65 180 97.41 181.82 97.26 183.64C97.11 185.3 97.06 186.98 96.75 188.61C94.93 197.99 89.79 204.27 81.24 208.34C78.83 209.48 73.5 210.87 70.85 210.69C70.48 210.67 70.3 210.41 69.98 210.33C69.93 210.01 69.73 209.76 69.72 209.41C69.69 208.75 69.85 208.08 69.89 207.42C70.09 204.67 70.35 201.95 70.66 199.21C70.88 197.22 70.95 195.22 71.14 193.23C71.3 191.49 71.56 189.76 71.74 188.02C72.31 182.63 72.7 177.23 73.18 171.84C73.38 169.68 73.69 167.54 73.87 165.38C74.34 159.9 74.66 154.4 75.27 148.94C75.52 146.7 75.76 144.47 75.9 142.22C76.24 136.88 76.21 132.38 80.57 128.52C84.24 125.26 88.31 125.7 92.86 125.72C100.19 125.75 107.52 125.7 114.86 125.71C138.36 125.72 161.86 125.59 185.36 125.7C192.44 125.73 199.52 125.67 206.61 125.71C209.02 125.72 211.44 125.7 213.86 125.72C214.75 125.73 215.71 125.64 216.6 125.76C216.95 125.81 217.18 126.01 217.5 126.1C217.55 126.32 217.74 126.51 217.79 126.75C218.1 128.21 217.85 130.22 217.85 131.74C217.85 135.74 217.85 139.74 217.85 143.74C217.83 155.15 217.87 166.57 217.82 177.99C217.75 194.49 217.83 210.99 217.83 227.49C217.83 231.74 217.83 235.99 217.85 240.24C217.88 247.22 217.96 254.27 216.85 261.19C216.28 264.71 215.39 268.2 214.29 271.59C214.09 272.23 214 272.89 213.77 273.52C209.25 285.77 202.7 295.63 193.03 304.46C182.18 314.37 167.64 320.87 153.1 322.81C148.73 323.39 144.28 323.36 139.88 323.37C135.96 323.38 132.04 323.38 128.13 323.37C117.88 323.34 107.62 323.41 97.38 323.36C92.79 323.34 88.21 323.35 83.63 323.38C79.91 323.39 76.07 323.62 72.42 322.8C67.89 321.79 63.9 318.4 62.19 314.08C61.81 313.1 61.55 311.99 61.29 310.96C60.5 307.76 61.18 303.29 61.55 300.01C61.86 297.28 61.97 294.53 62.2 291.79C62.38 289.55 62.7 287.32 62.89 285.08C63.47 278.02 64.09 270.97 64.73 263.92C65.15 259.36 65.42 254.2 67.22 249.96C68.77 246.33 71.31 243.29 74.24 240.7C83.4 232.65 96.05 229.9 107.85 232.76C109.62 233.19 111.43 233.6 113.12 234.28C120.57 237.24 125.73 242.05 127.81 250C128.1 251.12 128.18 252.31 128.32 253.46C128.77 257.14 129.01 260.7 130.24 264.24C133.6 273.91 141.86 282.02 151.77 284.8C165.14 288.53 179.57 283.42 187.17 271.71C188.62 269.48 190.13 266.68 190.87 264.12C191.24 262.86 191.7 261.57 191.91 260.27C192.5 256.56 192.4 252.79 192.41 249.05C192.41 244.71 192.39 240.38 192.39 236.05C192.4 219.8 192.39 203.55 192.39 187.3C192.4 180.46 192.35 173.63 192.41 166.8C192.44 164.38 192.43 161.96 192.43 159.55C192.43 158.32 192.54 157.02 192.4 155.8C192.37 155.45 192.16 155.21 192.08 154.89Z", "s": "M181.27 323.29C181.43 323.05 181.37 322.74 181.61 322.48C181.77 322.32 185.89 320.2 186.6 319.76C190.48 317.34 194.15 314.59 197.63 311.63C207.62 303.11 216.09 291.61 220.79 279.33C223.14 273.22 224.88 266.8 225.73 260.3C226.47 254.62 226.31 248.77 226.29 243.06C226.26 238.06 226.31 233.06 226.29 228.06C226.17 205.47 226.27 182.88 226.27 160.3C226.27 152.88 226.26 145.46 226.27 138.04C226.27 135.37 226.26 132.71 226.25 130.04C226.24 128.99 226.1 127.84 226.21 126.8C226.24 126.55 226.4 126.35 226.43 126.12C226.65 126.05 226.82 125.85 227.06 125.78C228.37 125.41 231.31 125.67 232.79 125.67C235.9 125.69 238.46 125.61 241.28 127.11C243.81 128.45 246.14 131.81 246.84 134.54C247.2 135.98 247.26 137.52 247.42 138.99C247.76 142.06 247.97 145.13 248.24 148.21C248.53 151.45 248.9 154.67 249.12 157.92C249.28 160.33 249.62 162.72 249.82 165.13C250.49 173.19 251.13 181.24 251.84 189.3C252.01 191.2 252.07 193.12 252.23 195.03C252.71 200.59 253.29 206.15 253.8 211.71C254.02 214.03 254.11 216.36 254.32 218.69C255.08 227.07 255.99 235.43 256.81 243.81C257.67 252.68 258.43 261.57 259.22 270.45C259.88 277.91 260.55 285.39 261.23 292.85C261.45 295.34 261.79 297.82 261.98 300.31C262.36 305.64 263.49 310.48 260.9 315.48C260.17 316.88 259.17 318.15 258.04 319.24C253 324.11 246.57 323.42 240.12 323.39C226.45 323.35 212.78 323.48 199.12 323.39C195.2 323.36 191.28 323.39 187.36 323.38C185.55 323.37 183.68 323.58 181.88 323.49C181.64 323.48 181.47 323.31 181.27 323.29Z"};
 function jmDefs(){return`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="jm-icon" viewBox="58 56 208 272"><path fill="#13734E" fill-rule="evenodd" d="${JM_D.h}"/><path fill="#12754F" fill-rule="evenodd" d="${JM_D.b}"/><path fill="#0A5840" fill-rule="evenodd" d="${JM_D.s}"/></symbol><symbol id="jm-icon-mono" viewBox="58 56 208 272"><path fill-rule="evenodd" d="${JM_D.h}"/><path fill-rule="evenodd" d="${JM_D.b}"/><path fill-rule="evenodd" d="${JM_D.s}"/></symbol></svg>`}
 function jmSplashHtml(){return`<div class="jm-splash" id="jmSplash" role="status" aria-live="polite" aria-label="Memuat Janah Mart"><div class="jm-sp-badge"><svg viewBox="58 56 208 272" aria-hidden="true"><path class="l-handle" fill="#13734E" fill-rule="evenodd" d="${JM_D.h}"/><path class="l-body" fill="#12754F" fill-rule="evenodd" d="${JM_D.b}"/><path class="l-side" fill="#0A5840" fill-rule="evenodd" d="${JM_D.s}"/></svg></div><p class="jm-sp-word">JANAH MART</p><p class="jm-sp-text">Menyiapkan belanjaan Anda…</p><div class="jm-sp-track"><div class="jm-sp-bar"></div></div></div>`}
@@ -217,21 +234,31 @@ function MemberApp(sb,root,cfg){
 const $=s=>root.querySelector(s),rp=n=>"Rp"+Number(n).toLocaleString("id-ID");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const normWa=v=>{v=v.replace(/\D/g,"");return v.startsWith("0")?"62"+v.slice(1):v};
-let me=null,products=[],orders=[],cart={},tab="home",cat="Semua",q="",mode="login",msg="",cartOpen=false,authOpen=false,ful="ambil",setg={},cardAnimated=false,pay="tunai",busy=false;
+let me=null,products=[],orders=[],cart=jmCartInit(),tab="home",cat="Semua",q="",mode="login",msg="",cartOpen=false,authOpen=false,ful="ambil",setg={},cardAnimated=false,pay="tunai",busy=false;
 const TABS={home:"beranda",orders:"orderan",contact:"kontak",profile:"profil"};
 tab=Object.keys(TABS).find(k=>"#"+TABS[k]===location.hash)||"home";
 root.classList.add("app");
 
 async function load(){
-  const{data:{user}}=await sb.auth.getUser();me=null;
-  if(user){const{data}=await sb.from("profiles").select("*").eq("id",user.id).single();me=data}
+  const{data:{session}}=await sb.auth.getSession();const user=session?.user||null;me=null;jmState.stale=false;
+  if(user){
+    const r=await sb.from("profiles").select("*").eq("id",user.id).single();
+    if(!r.data&&r.error&&jmNet(r.error)){
+      const k=jmRead();
+      if(k&&k.uid===user.id&&k.me&&k.me.status==="active"){me=k.me;products=k.products||[];orders=k.orders||[];setg=k.setg||{};jmState.stale=true;jmBar();return}
+    }
+    me=r.data;
+  }
   if(me?.status==="active"){
     const[a,b,c]=await Promise.all([sb.from("products").select("*").eq("active",true).order("category").order("name"),
       sb.from("orders").select("*").order("created_at",{ascending:false}).limit(50),sb.from("settings").select("*")]);
+    if(a.error&&jmNet(a.error)){const k=jmRead();if(k&&k.uid===user.id){products=k.products||[];orders=k.orders||[];setg=k.setg||{};jmState.stale=true;jmBar();return}}
     products=a.data||[];orders=b.data||[];setg=Object.fromEntries((c.data||[]).map(r=>[r.key,r.value]));
+    jmWrite(JM_CACHE,{uid:user.id,me,products,orders,setg,ts:Date.now()});jmBar();
   }else if(!me){
-    const{data}=await sb.from("public_products").select("*").order("category").order("name");
-    products=data||[];orders=[];cart={};
+    const{data,error}=await sb.from("public_products").select("*").order("category").order("name");
+    if(error&&jmNet(error)){products=jmRead(JM_PUB)||[];jmState.stale=true;jmBar()}else{products=data||[];jmWrite(JM_PUB,products)}
+    orders=[];cart={};
   }
 }
 const greet=()=>{const h=new Date().getHours();return h<11?"Selamat pagi":h<15?"Selamat siang":h<18?"Selamat sore":"Selamat malam"};
@@ -345,7 +372,7 @@ function pgBurst(){const cf=$("#pgCf");cf.innerHTML="";if(matchMedia("(prefers-r
  for(let i=0;i<34;i++){const s=document.createElement("i"),a=Math.PI*2*i/34+Math.random()*.4,r=90+Math.random()*130;s.style.cssText=`--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r-30)}px;--r:${Math.round(Math.random()*720-360)}deg;--d:${(.9+Math.random()*.2).toFixed(2)}s;background:${col[i%5]}`;cf.appendChild(s)}}
 async function payNow(){if(busy)return;const btn=$("#pgPay"),isCash=payM==="tunai",co=cashOpts();
  if((payM==="qris"&&!setg.qris_image)||(payM==="transfer"&&!banks().length))return toast("Metode ini belum disiapkan toko.");
- busy=true;btn.disabled=true;btn.textContent="Mengirim pesanan…";const total=cartTotal();
+ if(!navigator.onLine){jmToast("Sedang offline. Keranjang tersimpan, kirim saat online.");return}busy=true;btn.disabled=true;btn.textContent="Mengirim pesanan…";const total=cartTotal();
  const{data,error}=await sb.rpc("place_order",{p_items:Object.entries(cart).map(([i,q])=>({id:+i,qty:q})),p_fulfillment:ful,p_payment:payM,p_cash_given:isCash?co[cashIdx][1]:null,p_address:addrVal,p_note:noteVal});
  busy=false;btn.disabled=false;if(error){btn.textContent=payCta();return toast(error.message)}
  cart={};await load();
@@ -427,7 +454,7 @@ function saleTick(){clearInterval(saleT);const e=$("#saleCd");if(!e)return;
  const ends=products.filter(isPromo).map(p=>p.promo_until).filter(Boolean).map(x=>+new Date(x));if(!ends.length)return;
  const end=Math.min(...ends);$("#saleLbl").textContent="Berakhir dalam";
  const f=()=>{const s=Math.max(0,Math.round((end-Date.now())/1000)),d=Math.floor(s/86400);e.textContent=(d?d+" hari ":"")+[Math.floor(s%86400/3600),Math.floor(s%3600/60),s%60].map(v=>String(v).padStart(2,"0")).join(":");if(s<=0){clearInterval(saleT);render()}};f();saleT=setInterval(f,1000)}
-function render(){try{history.replaceState(null,"","#"+TABS[tab])}catch{}root.innerHTML=jmDefs()+(me&&me.status!=="active"?gateView():mainView())+(payOpen&&me?payPage():"")+(stId&&me?statusPage():"");anim();saleTick();if(payOpen&&me)paintPay();if(stId&&me)paintSt()}
+function render(){jmCartSave(cart);try{history.replaceState(null,"","#"+TABS[tab])}catch{}root.innerHTML=jmDefs()+(me&&me.status!=="active"?gateView():mainView())+(payOpen&&me?payPage():"")+(stId&&me?statusPage():"");anim();saleTick();if(payOpen&&me)paintPay();if(stId&&me)paintSt()}
 
 root.addEventListener("click",async e=>{const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id;
   if((a==="closecart"||a==="closeauth")&&e.target!==b)return;
@@ -447,11 +474,11 @@ root.addEventListener("click",async e=>{const b=e.target.closest("[data-act]");i
   else if(a==="apply"){const r=await sb.rpc("apply_prioritas");msg=r.error?r.error.message:"";await load()}
   else if(a==="pay"){pay=id}
   else if(a==="again"){const o=orders.find(x=>x.id==id);o.items.forEach(i=>{if(products.some(p=>p.id==i.id))cart[i.id]=(cart[i.id]||0)+i.qty});cartOpen=true;tab="home"}
-  else if(a==="logout"){await sb.auth.signOut();cardAnimated=false;cart={};msg="";tab="home";await load()}
+  else if(a==="logout"){if(!navigator.onLine){jmToast("Keluar butuh internet.");return}await sb.auth.signOut();jmClear();cardAnimated=false;cart={};msg="";tab="home";await load()}
   else if(a==="order"){
     const items=Object.entries(cart).map(([i,qty])=>({id:+i,qty})),addr=ful==="antar"?$("#addr").value.trim():"";
     if(!items.length||(ful==="antar"&&!addr)){msg=!items.length?"Pilih produk dulu.":"Isi alamat pengantaran.";return render()}
-    if(busy)return;busy=true;const{error}=await sb.rpc("place_order",{p_items:items,p_fulfillment:ful,p_payment:pay,p_address:addr,p_note:$("#note").value.trim()});
+    if(!navigator.onLine){jmToast("Sedang offline. Keranjang tersimpan, kirim saat online.");return}if(busy)return;busy=true;const{error}=await sb.rpc("place_order",{p_items:items,p_fulfillment:ful,p_payment:pay,p_address:addr,p_note:$("#note").value.trim()});
     busy=false;if(error){msg=error.message;return render()}
     if(addr)try{localStorage.setItem("addr",addr)}catch{}
     cart={};cartOpen=false;tab="orders";msg="";await load();
@@ -476,4 +503,13 @@ root.addEventListener("submit",async e=>{e.preventDefault();const k=e.target.dat
 document.body.insertAdjacentHTML("afterbegin",jmSplashHtml());
 cfg.onReady=JMSplash(document.getElementById("jmSplash"),document.getElementById("app")).ready;
 MemberApp(sb,document.getElementById("app"),cfg);
+if("serviceWorker" in navigator){
+  const had=!!navigator.serviceWorker.controller;let rl=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had||rl)return;rl=true;location.reload()});
+  addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").then(reg=>{
+    if(reg.waiting&&navigator.serviceWorker.controller){jmState.upd=reg.waiting;jmBar()}
+    reg.addEventListener("updatefound",()=>{const n=reg.installing;if(!n)return;n.addEventListener("statechange",()=>{if(n.state==="installed"&&navigator.serviceWorker.controller){jmState.upd=n;jmBar()}})});
+  }).catch(()=>{})});
+}
+jmBar();
 </script></body></html>
