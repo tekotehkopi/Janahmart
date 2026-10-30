@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "Com.janahmart.toko",
+        "sha256_cert_fingerprints": ["71:79:0D:54:18:21:2A:49:A4:B8:1E:EF:52:48:F2:2F:28:B6:AA:9E:09:49:81:BD:7D:77:D2:66:CB:83:1B:58"]
+      }
+    }]
