@@ -1,6 +1,6 @@
 /* Janah Mart service worker.
    Naikkan VERSION setiap kali daftar file/cache di bawah berubah. */
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL = "jm-shell-" + VERSION;
 const RUN = "jm-run-" + VERSION;
 const IMG = "jm-img-v1"; // dihapus oleh aplikasi saat logout
@@ -9,7 +9,7 @@ const MAX_IMG = 150;
 const SB_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
 const FONT_CSS = "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap";
 const CROSS_HOSTS = ["cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
-const LOCAL = ["./", "index.html", "manifest.json", "logo-janah-mart.png", "ikon-janah-mart.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
+const LOCAL = ["./", "index.html", "manifest.json", "logo-janah-mart.png", "ikon-janah-mart.png", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "favicon-48.png", "apple-touch-icon.png"];
 
 const corsReq = (url) => new Request(url, { mode: "cors", credentials: "omit" });
 
