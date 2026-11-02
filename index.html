@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Janah Mart</title><link rel="icon" href="favicon-48.png" sizes="48x48"><link rel="icon" href="ikon-janah-mart.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#0A5840"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--dark:#0A5840;--green:#12754F;--gold:#C69D46;--bg:#EEF4F0;--ink:#0F2A20;--mut:#5B7266;--line:#D5E3DA;--jm-green-900:#0A5840;--jm-green-700:#12754F;--jm-green-500:#1E8A5F;--jm-gold:#C69D46;--jm-cream:#F3F8F4;--jm-ink:#0F2A20;--surface:#fff;--muted:#5B7266;--font-display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;--font-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -207,10 +207,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .gh i{font:700 12px var(--font-body);font-style:normal;background:var(--bg);color:var(--green);border-radius:999px;padding:3px 11px}
 .grp .pc{border:0;border-bottom:1.5px solid var(--line);border-radius:0;margin:0;padding:12px 0}.grp .pc:last-child{border-bottom:0}
 @property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
-.nb{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 0% 0%,#0F6A4B 0%,#073C2C 60%,#052A1F 100%);border:1.5px solid rgba(25,242,154,.6);border-radius:22px;padding:18px 18px 16px;margin:12px 0 16px;animation:nbGlow 3.2s ease-in-out infinite}
-.nb h2{margin:0;color:#DDFFF1;font-size:30px;text-shadow:0 0 4px #7DFFCB,0 0 12px #19F29A,0 0 26px #19F29A,0 0 44px rgba(25,242,154,.7);animation:neonFlick 5s linear infinite;position:relative;z-index:1}
-.nb small{display:block;margin-top:4px;color:#9FE9C8;position:relative;z-index:1}
-.nb::after{content:"";position:absolute;left:-20%;right:-20%;bottom:-70%;height:90%;background:radial-gradient(closest-side,rgba(25,242,154,.30),transparent);animation:nbDrift 6s ease-in-out infinite alternate;pointer-events:none}
+.nb{position:relative;overflow:hidden;background:linear-gradient(135deg,#1E8A5F 0%,#12754F 50%,#0A5840 100%);border-radius:22px;padding:18px 18px 16px;margin:12px 0 16px;box-shadow:0 8px 20px rgba(10,88,64,.22)}
+.nb h2{margin:0;color:#fff;font-size:28px;position:relative;z-index:1}
+.nb small{display:block;margin-top:4px;color:rgba(243,248,244,.88);position:relative;z-index:1}
+.nb::after{content:"";position:absolute;right:-26px;top:-34px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.07);pointer-events:none}
 @keyframes nbGlow{0%,100%{box-shadow:0 0 10px rgba(25,242,154,.30),0 10px 24px rgba(4,36,25,.25)}50%{box-shadow:0 0 22px rgba(25,242,154,.60),0 10px 28px rgba(4,36,25,.30)}}
 @keyframes neonFlick{0%,19%,21%,60%,62%,100%{opacity:1}20%,61%{opacity:.8}}
 @keyframes nbDrift{to{transform:translateX(22%)}}
@@ -227,6 +227,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .sk-f{text-align:center;color:var(--mut);font-size:12.5px;margin:10px 0 0}
 .is-loading svg[data-jml] *{animation-play-state:paused!important}
 @media (prefers-reduced-motion:reduce){.nb,.nb h2,.nb::after,.oc.live,.oc.live .st,nav button.on::before{animation:none!important}}
+
+/* === Kunci layar: tanpa zoom cubit, tanpa seleksi/salin/menu tekan-lama === */
+html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,textarea,select,[contenteditable="true"],.sel,.code{-webkit-user-select:text;user-select:text}
+img,svg{-webkit-user-drag:none;user-drag:none}
+
+.sheet .link[data-act="closecart"],.sheet .link[data-act="closeauth"],.sheet .link[data-act="strukx"]{display:block;width:100%;margin:8px 0 0;padding:12px;text-align:center;font-size:16px}
 </style></head><body><div id="app"></div>
 <script>
 // === PENGATURAN ===
@@ -248,6 +256,10 @@ function jmBar(){let b=document.getElementById("jmBar");if(!b){b=document.create
  else if(jmState.stale){t="Sudah online. Ketuk untuk memuat data terbaru.";f=()=>location.reload()}
  b.textContent=t;b.style.display=t?"block":"none";b.style.cursor=f?"pointer":"default";b.onclick=f;document.body.style.paddingTop=t?b.offsetHeight+"px":""}
 addEventListener("online",jmBar);addEventListener("offline",jmBar);
+
+/* === Matikan menu tekan-lama (salin/telusuri) kecuali di kolom isian === */
+document.addEventListener("contextmenu",e=>{const t=e.target;if(!(t.closest&&t.closest("input,textarea,.sel")))e.preventDefault()});
+["gesturestart","gesturechange","gestureend"].forEach(n=>document.addEventListener(n,e=>e.preventDefault(),{passive:false}));
 
 /* === JAM LAYANAN ANTAR (WIB) === */
 let pwMsg="";
@@ -336,7 +348,7 @@ const stl=s=>({siap:"siap diambil",menunggu:"menunggu konfirmasi"}[s]||s);
 const payl=p=>({tunai:"Tunai",transfer:"Transfer",qris:"QRIS"}[p]||p);
 const jmAuthLogo=()=>`<div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:8px">${jmLogo("a",96)}<b class="hdg" style="display:block;font-size:24px;margin-top:8px;color:var(--dark)">${esc(cfg.brand)}</b><small style="color:var(--mut)">Minimarket Keluarga</small></div>`;
 const logo=()=>cfg.logo?`<img src="${esc(cfg.logo)}" alt="${esc(cfg.brand)}" style="height:46px">`:`<b class="hdg">${esc(cfg.brand)}</b>`;
-const fulOpts=()=>`<b class="hdg" style="font-size:15px">Pengambilan</b><button type="button" class="opt ${ful==="ambil"?"on":""}" data-act="ful" data-id="ambil">🏪 Ambil di toko</button><button type="button" class="opt ${ful==="antar"?"on":""} ${me.tier==="prioritas"&&jmDOpen(setg)?"":"off"}" data-act="ful" data-id="antar">🛵 Antar ke alamat${me.tier==="prioritas"?(jmDh(setg)?` · jam antar ${jmDTxt(setg)}`:""):" (khusus Prioritas)"}</button>`;
+const fulOpts=()=>`<b class="hdg" style="display:block;font-size:15px;margin:12px 0 6px">Pengambilan</b><button type="button" class="opt ${ful==="ambil"?"on":""}" data-act="ful" data-id="ambil">🏪 Ambil di toko</button><button type="button" class="opt ${ful==="antar"?"on":""} ${me.tier==="prioritas"&&jmDOpen(setg)?"":"off"}" data-act="ful" data-id="antar">🛵 Antar ke alamat${me.tier==="prioritas"?(jmDh(setg)?` · jam antar ${jmDTxt(setg)}`:""):" (khusus Prioritas)"}</button>`;
 const imgUrl=path=>sb.storage.from("produk").getPublicUrl(path).data.publicUrl;
 const ph=p=>p.image?`<img class="ph" loading="lazy" alt="" src="${esc(imgUrl(p.image))}">`:`<div class="ph em">${esc(p.emoji||"🛒")}</div>`;
 const mask=w=>String(w).replace(/^(\d{4})\d+(\d{3})$/,"$1•••••$2");
@@ -386,7 +398,7 @@ function strukSheet(){const o=orders.find(x=>x.id==strukId);if(!o)return"";
 function cartSheet(){const ids=Object.keys(cart);const total=ids.reduce((s,i)=>s+cart[i]*unitPrice(i),0);
 let addr="";try{addr=localStorage.getItem("addr")||""}catch{}
 return`<div class="sheet" data-act="closecart"><div><h2>Keranjang</h2>${ids.map(i=>{const p=products.find(x=>x.id==i);return p?card(p):""}).join("")||`<p class="empty">Keranjang masih kosong.</p>`}
-<b class="h" style="font-size:24px">Total ${rp(total)}</b>${fulOpts()}${ful==="antar"?`<textarea id="addr" rows="2" placeholder="Alamat pengantaran">${esc(addr)}</textarea>`:""}<input id="note" placeholder="Catatan (opsional)"><p class="msg">${esc(msg)}</p><button class="btn" data-act="topay">Lanjut ke pembayaran</button><button class="link" data-act="closecart">Tutup</button></div></div>`}
+<b class="h" style="display:block;font-size:24px;margin:14px 0 6px">Total ${rp(total)}</b>${fulOpts()}${ful==="antar"?`<textarea id="addr" rows="2" placeholder="Alamat pengantaran">${esc(addr)}</textarea>`:""}<input id="note" placeholder="Catatan (opsional)"><p class="msg">${esc(msg)}</p><button class="btn" data-act="topay">Lanjut ke pembayaran</button><button class="link" data-act="closecart">Tutup</button></div></div>`}
 const EYE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',EYEOFF='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 7.6A17 17 0 0 0 2 12s3.6 6 10 6c1.4 0 2.6-.3 3.8-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
 function authSheet(){const r=mode==="reg";return`<div class="sheet" data-act="closeauth"><div>${jmAuthLogo()}<h2>${r?"Daftar member":"Masuk"}</h2><p style="color:var(--mut);margin:0">Harga dan pemesanan khusus member.</p>
 <form data-form="${mode}">${r?`<input name="name" placeholder="Nama lengkap" required>`:""}<input name="wa" inputmode="tel" placeholder="Nomor WhatsApp" required><div class="pwrap"><input name="pw" type="password" autocomplete="${r?"new-password":"current-password"}" placeholder="${r?"Buat kata sandi (min. 6)":"Kata sandi"}" minlength="6" required><button type="button" class="pweye" data-act="pweye" aria-label="Lihat kata sandi" aria-pressed="false">${EYE}</button></div>${r?`<input name="code" placeholder="Kode member 8 huruf" maxlength="8" style="text-transform:uppercase" required>`:""}<button class="btn">${r?"Daftar":"Masuk"}</button></form>
